@@ -143,7 +143,7 @@ public class Word2 {
 
 			Configuration conf = new Configuration();
 			Job job = Job.getInstance(conf, "Word Count");
-			job.setJarByClass(Words.class);
+			job.setJarByClass(Word2.class);
 
 			job.setMapOutputKeyClass(Text.class);
 			job.setMapOutputValueClass(Text.class);
