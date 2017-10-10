@@ -45,14 +45,14 @@ public class Q3 {
 		
 				String songID = "";
 				
-				float danceability = 0;
+				float danceability ;
 
 				songID = datasplit[43];
 				danceability = Float.parseFloat(datasplit[21]);
 
 				tempo.set(danceability);
 
-				context.write(new Text(songID), tempo);
+				context.write(new Text("song-median"), tempo);
 			}
 
 		}
@@ -62,7 +62,7 @@ public class Q3 {
 	public static class IntSumReducer extends Reducer<Text, FloatWritable, Text, FloatWritable> {
 		private FloatWritable result = new FloatWritable();
 		int counter_for_AverageCalc=0;
-		float total_Tempo=0;
+		float total_Tempo;
 		ArrayList<Float> daceabilityList = new ArrayList<Float>();
 		
 		
@@ -92,7 +92,9 @@ public class Q3 {
 				median = daceabilityList.get(half -1);
 			}
 			
-			context.write(new Text("Tatal avergae tempo acorss all songs: " + key.toString()), result);
+			result.set(median);
+			
+			context.write(new Text("Tatal avergae tempo acorss all songs: " ), result);
 			
 		}
 	
@@ -103,7 +105,7 @@ public class Q3 {
 
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf, "Word Count");
-		job.setJarByClass(Q2.class);
+		job.setJarByClass(Q3.class);
 		job.setMapperClass(Tokeniizermapper.class);
 		// job.setCombinerClass(IntSumReducer.class);
 		job.setReducerClass(IntSumReducer.class);
