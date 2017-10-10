@@ -3,6 +3,8 @@ package WC;
 import java.awt.datatransfer.FlavorTable;
 import java.awt.event.FocusAdapter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 import org.apache.hadoop.io.Text;
 
@@ -43,12 +45,22 @@ public class Q5 {
 
 		public static class MyReducer extends Reducer<FloatWritable, Text, Text, FloatWritable> {
 
+			HashMap<String, Float> top10ArtistHotttness = new HashMap<String, Float>();
+
+			int TOP_10_RECORDS = 0;
+
 			public void reduce(FloatWritable key, Iterable<Text> values, Context context)
 					throws IOException, InterruptedException {
 
 				for (Text val : values) {
 
-					context.write(val, key);
+					if (TOP_10_RECORDS < 3) {
+						context.write(val, key);
+					} else {
+						break;
+					}
+
+					TOP_10_RECORDS += 1;
 
 				}
 
