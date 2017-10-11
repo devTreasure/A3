@@ -1,6 +1,6 @@
 package WC;
 
-import org.apache.hadoop.mapreduce.Mapper;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public class Q3 {
+public class Q4OLD {
 
 	public static double median(double[] m) {
 	    int middle = m.length/2;
@@ -31,9 +31,9 @@ public class Q3 {
 	}
 	
 
-	public static class Tokeniizermapper extends Mapper<LongWritable, Text, Text, FloatWritable> {
-		private final static FloatWritable dancability = new FloatWritable();
-		private Text atrtistID = new Text();
+	public static class Tokeniizermapper extends Mapper<LongWritable, Text, FloatWritable,Text > {
+		private final static FloatWritable hottness = new FloatWritable();
+		private Text artistName = new Text();
 
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			// StringTokenizer itr = new StringTokenizer(value.toString());
@@ -43,60 +43,26 @@ public class Q3 {
 			if (key.get() != 0) {
 				
 		
-				String songID = "";
+				String artist = "";
 				
-				float danceability ;
+				float songHotttness = 0;
 
-				songID = datasplit[43];
-				danceability = Float.parseFloat(datasplit[21]);
+				artist = datasplit[11];
+				
+				songHotttness = Float.parseFloat(datasplit[41]);
 
-				dancability.set(danceability);
-
-				context.write(new Text("song-dancability"), dancability);
+				hottness.set(songHotttness);
+				artistName.set(artist);
+				
+				context.write(hottness, artistName);
 			}
 
 		}
 
 	}
 
-	public static class IntSumReducer extends Reducer<Text, FloatWritable, Text, FloatWritable> {
-		private FloatWritable result = new FloatWritable();
-		int counter_for_AverageCalc=0;
-		float total_Tempo;
-		ArrayList<Float> daceabilityList = new ArrayList<Float>();
+	public static class IntSumReducer extends Reducer<FloatWritable, Text ,Text, FloatWritable> {
 		
-		@Override
-		public void reduce(Text key, Iterable<FloatWritable> values, Context context)
-				throws IOException, InterruptedException {
-			
-			float sum = 0;
-			daceabilityList.clear();
-			
-			for (FloatWritable val : values) {
-				
-				daceabilityList.add(val.get());
-			
-			}
-			
-			Collections.sort(daceabilityList);
-			int size  = daceabilityList.size();
-
-			Float median;
-			
-			if(size%2 == 0){
-				int half = size/2;
-
-				median  = daceabilityList.get(half);
-			}else {
-				int half = (size + 1)/2;
-				median = daceabilityList.get(half -1);
-			}
-			
-			result.set(median);
-			
-			context.write(new Text("Tatal avergae tempo acorss all songs: " ), result);
-			
-		}
 	
 		}
 		
@@ -105,7 +71,7 @@ public class Q3 {
 
 		Configuration conf = new Configuration();
 		Job job = Job.getInstance(conf, "Word Count");
-		job.setJarByClass(Q3.class);
+		job.setJarByClass(Q4OLD.class);
 		job.setMapperClass(Tokeniizermapper.class);
 		// job.setCombinerClass(IntSumReducer.class);
 		job.setReducerClass(IntSumReducer.class);

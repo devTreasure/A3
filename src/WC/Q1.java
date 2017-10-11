@@ -20,7 +20,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public class Word2 {
+public class Q1 {
 
 	public static class Tokeniizermapper extends Mapper<LongWritable, Text, Text, Text> {
 		private final static IntWritable one = new IntWritable(1);
@@ -55,12 +55,12 @@ public class Word2 {
 
 					int[] mbtagFre = new int[strmbtagsCount.length];
 					System.out.println(strmbtagsCount.length);
-					if (mbtagFre.length >= 1  && strmbtagsCount.length >=1 ) {
+					if (mbtagFre.length >= 1 && strmbtagsCount.length >= 1) {
 
 						for (int i = 0; i < strmbtagsCount.length; i++) {
 							// System.out.println(strmbtagsCount[i]);
-							if(!(strmbtagsCount[i].trim().isEmpty()))
-							  mbtagFre[i] = Integer.parseInt(strmbtagsCount[i].trim());
+							if (!(strmbtagsCount[i].trim().isEmpty()))
+								mbtagFre[i] = Integer.parseInt(strmbtagsCount[i].trim());
 						}
 
 						// System.out.println(strmbTagFrequency);
@@ -71,9 +71,11 @@ public class Word2 {
 							// context.write(atrtistID.set(datasplit[1].toString()+string), one);
 							// context.write(new Text(datasplit[1].toString()+string) , one);
 
-							if (mbtagFre.length >= 1 )
-								if(mbtagFre[i] !=0)
-								context.write(new Text(datasplit[11]), new Text(strFGenere[i] + ":" + mbtagFre[i]));
+							if (mbtagFre.length >= 1)
+								if (mbtagFre[i] != 0) {
+									System.out.println(datasplit[11] + "--" + strFGenere[i] + ":" + mbtagFre[i]);
+									context.write(new Text(datasplit[11]), new Text(strFGenere[i] + ":" + mbtagFre[i]));
+								}
 
 						}
 					}
@@ -88,6 +90,7 @@ public class Word2 {
 	public static class IntSumReducer extends Reducer<Text, Text, Text, Text> {
 		private Text result = new Text();
 
+		@Override
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			int sum = 0;
 
@@ -120,19 +123,14 @@ public class Word2 {
 			else {
 				// how to short both array same time
 				Map<Integer, String> dictionary = new HashMap<Integer, String>();
-				
-				for(int i=0;i<tagFrq.size();i++)
-				{
-					dictionary.put(tagFrq.get(i),strGenre.get(i) );
+
+				for (int i = 0; i < tagFrq.size(); i++) {
+					dictionary.put(tagFrq.get(i), strGenre.get(i));
 				}
-				
-				
-				
-				if(dictionary.size()>0)
-				{
-					//context.write(dictionary, new Text(string));
-					for(String k : dictionary.values())
-					{
+
+				if (dictionary.size() > 0) {
+					// context.write(dictionary, new Text(string));
+					for (String k : dictionary.values()) {
 						context.write(key, new Text(k));
 					}
 				}
@@ -143,7 +141,7 @@ public class Word2 {
 
 			Configuration conf = new Configuration();
 			Job job = Job.getInstance(conf, "Word Count");
-			job.setJarByClass(Word2.class);
+			job.setJarByClass(Q1.class);
 
 			job.setMapOutputKeyClass(Text.class);
 			job.setMapOutputValueClass(Text.class);

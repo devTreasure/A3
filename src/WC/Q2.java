@@ -42,7 +42,7 @@ public class Q2 {
 
 				tempo.set(tempoID);
 
-				context.write(new Text(songID), tempo);
+				context.write(new Text("song-Tempo"), tempo);
 			}
 
 		}
@@ -53,6 +53,8 @@ public class Q2 {
 		private FloatWritable result = new FloatWritable();
 		int counter_for_AverageCalc=0;
 		float total_Tempo=0;
+		
+		@Override
 		public void reduce(Text key, Iterable<FloatWritable> values, Context context)
 				throws IOException, InterruptedException {
 			float sum = 0;
@@ -67,7 +69,7 @@ public class Q2 {
 			
 			result.set(sum);
 			
-			context.write(new Text("Tatal avergae tempo acorss all songs: "), result);
+			context.write(new Text("Total avergae tempo acorss all songs: "), result);
 			
 		}
 	
